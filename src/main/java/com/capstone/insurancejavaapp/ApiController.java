@@ -60,6 +60,21 @@ public class ApiController {
         return Optional.empty();
     }
 
+    @GetMapping("/claims/paid")
+    public Iterable<InsurancePolicy> getPaidClaims() {
+        List<InsurancePolicy> policies = new ArrayList<>();
+        for (InsurancePolicy policy : Database.policies) {
+            for (InsuranceClaim claim : policy.getClaims()) {
+                if(claim.getIsPaid()) {
+                    policies.add(policy);
+                    break;
+                }
+            }
+        }
+
+        return policies;
+    }
+
     private Map<String, Object> mapClaim(InsuranceClaim claim) {
         Map<String, Object> claimMap = new HashMap<>();
         claimMap.put("id", claim.getId());
