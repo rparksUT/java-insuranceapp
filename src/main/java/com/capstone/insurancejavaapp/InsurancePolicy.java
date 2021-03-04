@@ -8,6 +8,7 @@ public class InsurancePolicy {
     private String insuredLastName;
     private Double annualPremium;
     private ArrayList<InsuranceClaim> claims;
+    private Double claimsTotal;
 
     public InsurancePolicy(Integer id, String policyNumber, String insuredLastName, Double annualPremium) {
         this.id = id;
@@ -15,6 +16,7 @@ public class InsurancePolicy {
         this.insuredLastName = insuredLastName;
         this.annualPremium = annualPremium;
         this.claims = new ArrayList<>();
+        this.claimsTotal = 0.00d;
     }
 
     public Integer getId() {
@@ -54,5 +56,12 @@ public class InsurancePolicy {
 
     public Integer getClaimCount() {
         return claims.size();
+    }
+
+    public Double getClaimsTotal() {
+        return claimsTotal;
+    }
+    public void setClaimsTotal(Double claimsTotal) {
+        this.claimsTotal = claimsTotal;
     }
 }

@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +25,28 @@ public class ApiController {
             if (policy.getPolicyNumber().equals(policyNumber)) {
                 return Optional.of(policy);
             }
+        }
+
+        return Optional.empty();
+    }
+
+    @GetMapping("{policyNumber}/totals")
+    public Optional<List<Map<String, Object>>> getPolicyTotals(@PathVariable String policyNumber) {
+        Double total = 0.00d;
+        List<Map<String, Object>> policies = new ArrayList<>();
+        for (InsurancePolicy policy : Database.policies) {
+            if (policy.getPolicyNumber().equals(policyNumber)) {
+                for (InsuranceClaim claim : policy.getClaims()) {
+                    total += claim.getAmount();
+                }
+                policy.setClaimsTotal(total);
+                Map<String, Object> policyMap = mapPolicy(policy);
+                policies.add(policyMap);
+            }
+        }
+
+        if (policies.size() != 0) {
+            return Optional.of(policies);
         }
 
         return Optional.empty();
@@ -82,5 +102,13 @@ public class ApiController {
         claimMap.put("isPaid", claim.getIsPaid());
         claimMap.put("amount", claim.getAmount());
         return claimMap;
+    }
+
+    private Map<String, Object> mapPolicy(InsurancePolicy policy) {
+        Map<String, Object> newPolicy = new HashMap<>();
+        newPolicy.put("policyNumber", policy.getPolicyNumber());
+        newPolicy.put("annualPremium", policy.getAnnualPremium());
+        newPolicy.put("claimsTotals", policy.getClaimsTotal());
+        return newPolicy;
     }
 }
